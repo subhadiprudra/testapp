@@ -4,54 +4,55 @@ class JobStatusDashboard extends PureComponent {
   constructor(props) {
     super(props);
     
-    // State initialization
+    // State initialization with loading state for initial data
     this.state = {
       selectedStatus: null,
       showModal: false,
       isLoading: false,
       jobDetails: {},
-      
-      // Sample data - without job_details initially
-      data: {
-        "summery": {
-            "running": 10,
-            "on_hold": 2,
-            "failed": 3,
-            "terminated": 2
-        },
-        "job_status":{
-            "phase1 Pr1":{
-                "calypso":"completed",
-                "gmi":"running",
-                "brodridge":"complted",
-                "opics":"failed",
-                "fx calypso":"activated"
-            },
-            "phase1 PLA":{
-                "calypso":"running",
-                "gmi":"running",
-                "brodridge":"complted",
-                "opics":"failed"
-            },
-            "phase2 Pr1":{
-                "calypso":"completed",
-                "gmi":"running",
-                "brodridge":"complted",
-                "opics":"failed"
-            },
-            "phase2 Pr2":{
-                "calypso":"completed",
-                "gmi":"running",
-                "brodridge":"complted",
-                "opics":"failed"
-            },
-            "phase2 PLA":{
-                "calypso":"running",
-                "gmi":"running",
-                "brodridge":"complted",
-                "opics":"failed"
-            }
-        }
+      data: null,
+      isInitialLoading: true
+    };
+
+    // Mock data for network calls
+    this.mockInitialData = {
+      "summery": {
+          "running": 10,
+          "on_hold": 2,
+          "failed": 3,
+          "terminated": 2
+      },
+      "job_status":{
+          "phase1 Pr1":{
+              "calypso":"completed",
+              "gmi":"running",
+              "brodridge":"complted",
+              "opics":"failed"
+          },
+          "phase1 PLA":{
+              "calypso":"running",
+              "gmi":"running",
+              "brodridge":"complted",
+              "opics":"failed"
+          },
+          "phase2 Pr1":{
+              "calypso":"completed",
+              "gmi":"running",
+              "brodridge":"complted",
+              "opics":"failed"
+          },
+          "phase2 Pr2":{
+              "calypso":"completed",
+              "gmi":"running",
+              "brodridge":"complted",
+              "opics":"failed"
+          },
+          "phase2 PLA":{
+              "calypso":"running",
+              "gmi":"running",
+              "brodridge":"complted",
+              "opics":"failed"
+          }
       }
     };
 
@@ -101,6 +102,23 @@ class JobStatusDashboard extends PureComponent {
     this.getCardStyle = this.getCardStyle.bind(this);
     this.renderStatusIndicator = this.renderStatusIndicator.bind(this);
     this.fetchJobDetails = this.fetchJobDetails.bind(this);
+    this.fetchInitialData = this.fetchInitialData.bind(this);
+  }
+  
+  // Lifecycle method to fetch initial data
+  componentDidMount() {
+    this.fetchInitialData();
+  }
+  
+  // Method to simulate fetching initial dashboard data
+  fetchInitialData() {
+    // Simulate longer initial load
+    setTimeout(() => {
+      this.setState({
+        data: this.mockInitialData,
+        isInitialLoading: false
+      });
+    }, 1500); // 1.5 second initial loading time
   }
 
   // Method to fetch job details and open modal
@@ -153,6 +171,31 @@ class JobStatusDashboard extends PureComponent {
   // Generate mock job data for unknown statuses
   generateMockJobsForStatus(status, count) {
     const jobs = [];
+    
+    // If we don't have data yet, use some defaults
+    if (!this.state.data) {
+      const defaultSystems = ['calypso', 'gmi', 'brodridge', 'opics'];
+      const defaultPhases = ['phase1 Pr1', 'phase1 PLA', 'phase2 Pr1'];
+      
+      for (let i = 0; i < count; i++) {
+        const startTime = new Date();
+        startTime.setHours(startTime.getHours() - Math.random() * 3);
+        
+        const lastUpdate = new Date(startTime);
+        lastUpdate.setMinutes(lastUpdate.getMinutes() + Math.floor(Math.random() * 60) + 15);
+        
+        jobs.push({
+          id: `JOB-${Math.floor(Math.random() * 1000)}`,
+          name: `${status.charAt(0).toUpperCase() + status.slice(1)} Task ${i + 1}`,
+          phase: defaultPhases[Math.floor(Math.random() * defaultPhases.length)],
+          system: defaultSystems[Math.floor(Math.random() * defaultSystems.length)],
+          startTime: startTime.toISOString(),
+          lastUpdate: lastUpdate.toISOString()
+        });
+      }
+      
+      return jobs;
+    }
     
     // Get system names dynamically from the data
     const systemNames = new Set();
@@ -262,16 +305,51 @@ class JobStatusDashboard extends PureComponent {
 
   // Render method
   render() {
-    const { data, selectedStatus, showModal, isLoading, jobDetails } = this.state;
-    const hasFailedJobs = data.summery.failed > 0;
+    const { data, selectedStatus, showModal, isLoading, jobDetails, isInitialLoading } = this.state;
+    
+    // Initial loading screen
+    if (isInitialLoading) {
+      return (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '80vh',
+          width: '100%',
+          backgroundColor: '#f5f5f5',
+          padding: '20px',
+          borderRadius: '8px'
+        }}>
+          <div style={{
+            border: '4px solid rgba(0, 0, 0, 0.1)',
+            borderLeft: '4px solid #3b82f6',
+            borderRadius: '50%',
+            width: '50px',
+            height: '50px',
+            animation: 'spin 1s linear infinite',
+            marginBottom: '20px'
+          }}></div>
+          <h2 style={{
+            fontSize: '18px',
+            color: '#4b5563',
+            margin: '0'
+          }}>Loading Dashboard Data...</h2>
+        </div>
+      );
+    }
+    
+    const hasFailedJobs = data?.summery?.failed > 0;
     
     // Dynamically get all unique system names from the job_status data
     const systemNames = new Set();
-    Object.values(data.job_status).forEach(phase => {
-      Object.keys(phase).forEach(system => {
-        systemNames.add(system);
+    if (data && data.job_status) {
+      Object.values(data.job_status).forEach(phase => {
+        Object.keys(phase).forEach(system => {
+          systemNames.add(system);
+        });
       });
-    });
+    }
     
     // Convert to array and sort alphabetically
     const systems = Array.from(systemNames).sort();
