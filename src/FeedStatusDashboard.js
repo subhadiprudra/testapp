@@ -93,13 +93,11 @@ class FeedStatusDashboard extends PureComponent {
     // Define styles once in the constructor for better performance
     this.styles = {
       container: {
-        width: '65%',
+        width: '100%',
         maxWidth: '900px',
-        margin: '0 auto',
-        height:'200px',
+        margin: '0 auto'
       },
       summaryCard: {
-        height:'170px',
         backgroundColor: 'white',
         borderRadius: '8px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
@@ -477,30 +475,23 @@ class FeedStatusDashboard extends PureComponent {
         >
           <div style={this.styles.cardHeader}>
             <h2 style={this.styles.cardTitle}>Feed Status Dashboard</h2>
-            <div style={this.styles.refreshContainer}>
-              <span style={this.styles.refreshButtonText}>
-                Last updated: {this.state.lastRefreshed.toLocaleTimeString()}
-              </span>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={this.styles.lastUpdated}>
+                Updated: {this.state.lastRefreshed.toLocaleTimeString()}
+              </div>
               <button 
+                style={{
+                  ...this.styles.refreshButton,
+                  backgroundColor: isRefreshing ? '#e2e8f0' : '#f1f5f9',
+                  cursor: isRefreshing ? 'default' : 'pointer'
+                }}
+                disabled={isRefreshing}
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent opening the dialog
                   this.handleRefresh();
                 }}
-                style={{
-                  ...this.styles.refreshButton,
-                  backgroundColor: isRefreshing ? '#f3f4f6' : 'transparent',
-                  cursor: isRefreshing ? 'default' : 'pointer'
-                }}
-                disabled={isRefreshing}
               >
-                <RefreshCw 
-                  size={14} 
-                  style={{
-                    transform: isRefreshing ? 'rotate(360deg)' : 'rotate(0deg)',
-                    transition: 'transform 1s linear',
-                    color: '#4b5563'
-                  }} 
-                />
+                <span style={this.styles.refreshIcon}>↻</span> Refresh
               </button>
             </div>
           </div>

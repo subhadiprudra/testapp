@@ -1,123 +1,37 @@
+refreshButton: {
+        backgroundColor: '#f1f5f9',
+        border: 'none',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: '500',
+        color: '#64748b',
+        fontSize: '14px',
+        transition: 'background-color 0.2s ease'
+      },
+      refreshIcon: {
+        marginRight: '6px',
+        fontSize: '16px'
+      },
+      lastUpdated: {
+        fontSize: '12px',
+        color: '#94a3b8',
+        marginRight: '10px',
+        display: 'flex',
+        alignItems: 'center'
+      },
 
-return (
-<divstyle={this.styles.dashboard}>
-{/* Header with overall status */}
-<divstyle={this.styles.header}>
-<h1style={this.styles.title}>Job Dashboard</h1>
-<divstyle={this.styles.overallStatus}>
-<divstyle={this.styles.statusDot}></div>
-<span>{hasFailedJobs ? 'CRITICAL' : 'HEALTHY'}</span>
-</div>
-</div>
-
-{/* Summary cards */}
-<divstyle={this.styles.summaryGrid}>
-{Object.entries(data.summery).map(([key, value]) => {
-const { cardStyle, valueStyle } = this.getCardStyle(key);
-
-return (
-<div
-key={key}
-style={cardStyle}
-onClick={() =>this.openModal(key)}
-onMouseOver={(e) => {
-e.currentTarget.style.transform = 'scale(1.03)';
-e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-}}
-onMouseOut={(e) => {
-e.currentTarget.style.transform = 'scale(1)';
-e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-}}
->
-<divstyle={{ display:'flex', flexDirection:'column' }}>
-<spanstyle={valueStyle}>{value}</span>
-<spanstyle={{
-fontSize:'12px',
-fontWeight:'500',
-color:'#6b7280',
-marginTop:'4px'
-}}>
-{key.replace('_', ' ').toUpperCase()}
-</span>
-</div>
-</div>
-);
-})}
-</div>
-
-{/* Job status table */}
-<divstyle={this.styles.tableContainer}>
-<tablestyle={this.styles.table}>
-<thead>
-<tr>
-<thstyle={this.styles.tableHeader}>Phase</th>
-<thstyle={this.styles.tableHeader}>Calypso</th>
-<thstyle={this.styles.tableHeader}>GMI</th>
-<thstyle={this.styles.tableHeader}>Brodridge</th>
-<thstyle={this.styles.tableHeader}>OPICS</th>
-</tr>
-</thead>
-<tbody>
-{Object.entries(data.job_status).map(([phase, systems], index) => (
-<trkey={phase}style={index % 2 === 0 ? this.styles.evenRow : this.styles.oddRow}>
-<tdstyle={{ ...this.styles.tableCell, ...this.styles.phaseCell }}>{phase}</td>
-<tdstyle={this.styles.tableCell}>{this.renderStatusIndicator(systems.calypso)}</td>
-<tdstyle={this.styles.tableCell}>{this.renderStatusIndicator(systems.gmi)}</td>
-<tdstyle={this.styles.tableCell}>{this.renderStatusIndicator(systems.brodridge)}</td>
-<tdstyle={this.styles.tableCell}>{this.renderStatusIndicator(systems.opics)}</td>
-</tr>
-))}
-</tbody>
-</table>
-</div>
-
-{/* Job detail modal */}
-{showModal && (
-<divstyle={this.styles.modalBackdrop}>
-<divstyle={this.styles.modalContainer}>
-<divstyle={this.styles.modalHeader}>
-<h2style={this.styles.modalTitle}>
-{selectedStatus && `${selectedStatus.replace('_', ' ')} Jobs (${data.job_details[selectedStatus]?.length || 0})`}
-</h2>
-<button
-onClick={this.closeModal}
-style={this.styles.closeButton}
-onMouseOver={(e) =>e.currentTarget.style.color = '#1f2937'}
-onMouseOut={(e) =>e.currentTarget.style.color = '#6b7280'}
->
-×
-</button>
-</div>
-<divstyle={this.styles.modalBody}>
-<tablestyle={this.styles.table}>
-<thead>
-<tr>
-<thstyle={this.styles.tableHeader}>Job Name</th>
-<thstyle={this.styles.tableHeader}>Start Time</th>
-<thstyle={this.styles.tableHeader}>Last Update</th>
-</tr>
-</thead>
-<tbody>
-{selectedStatus && data.job_details[selectedStatus]?.map((job, idx) => (
-<trkey={job.id}style={idx % 2 === 0 ? this.styles.evenRow : this.styles.oddRow}>
-<tdstyle={{ ...this.styles.tableCell, ...this.styles.jobName }}>{job.name}</td>
-<tdstyle={this.styles.tableCell}>
-{newDate(job.startTime).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
-</td>
-<tdstyle={this.styles.tableCell}>
-{newDate(job.lastUpdate).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
-</td>
-</tr>
-))}
-</tbody>
-</table>
-</div>
-</div>
-</div>
-)}
-</div>
-);
-}
-}
-
-export default JobStatusDashboard;
+      <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={styles.lastUpdated}>
+                Updated: {this.state.lastRefreshed.toLocaleTimeString()}
+              </div>
+              <button 
+                style={styles.refreshButton}
+                onClick={this.refreshData}
+              >
+                <span style={styles.refreshIcon}>↻</span> Refresh
+              </button>
+            </div>
