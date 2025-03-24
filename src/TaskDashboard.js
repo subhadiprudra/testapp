@@ -34,158 +34,6 @@ class TaskDashboard extends PureComponent {
           }
       ]
     };
-    
-    // Define styles
-    this.styles = {
-      container: {
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        padding: '24px',
-        marginBottom: '16px',
-        cursor: 'pointer',
-        border: '1px solid #e5e5e5',
-        transition: 'border-color 0.2s ease',
-        width:'90%',
-        marginLeft :'3%',
-        marginTop:'50px'
-      },
-      statusBadge: {
-        display: 'inline-block',
-        padding: '6px 12px',
-        borderRadius: '16px',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        marginLeft: '12px'
-      },
-      statusGood: {
-        backgroundColor: '#d1fae5',
-        color: '#065f46'
-      },
-      statusBad: {
-        backgroundColor: '#fee2e2',
-        color: '#b91c1c'
-      },
-      card: {
-        backgroundColor: 'white',
-       // borderRadius: '8px',
-      //  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        overflow: 'hidden'
-      },
-      cardContent: {
-        padding: '24px'
-      },
-      sectionTitle: {
-        fontSize: '20px',
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: '24px'
-      },
-      progressContainer: {
-        marginBottom: '32px'
-      },
-      progressHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '8px'
-      },
-      progressLabel: {
-        fontSize: '14px',
-        fontWeight: '500',
-        color: '#555'
-      },
-      progressBarContainer: {
-        width: '100%',
-        height: '16px',
-        backgroundColor: '#e0e0e0',
-        borderRadius: '9999px'
-      },
-      progressBar: {
-        height: '100%',
-        backgroundColor: '#3b82f6',
-        borderRadius: '9999px'
-      },
-      statusGrid: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '24px',
-        marginBottom: '32px'
-      },
-      statusBox: {
-        border: '1px solid #e0e0e0',
-        borderRadius: '8px',
-        padding: '16px'
-      },
-      metricsContainer: {
-        display: 'flex',
-        justifyContent: 'space-around'
-      },
-      metricItem: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      },
-      metricLabel: {
-        fontSize: '14px',
-        color: '#666',
-        marginBottom: '4px'
-      },
-      metricValue: {
-        fontSize: '20px',
-        fontWeight: '500'
-      },
-      table: {
-        width: '100%',
-        borderCollapse: 'collapse',
-        fontSize: '14px'
-      },
-      tableHeader: {
-        backgroundColor: '#f9fafb',
-        textAlign: 'left'
-      },
-      tableHeaderCell: {
-        padding: '12px',
-        fontWeight: '500'
-      },
-      tableBody: {
-        borderTop: '1px solid #e5e7eb'
-      },
-      tableRow: {
-        borderBottom: '1px solid #e5e7eb'
-      },
-      tableCell: {
-        padding: '12px'
-      },
-      tableCellCenter: {
-        padding: '12px',
-        textAlign: 'center'
-      },
-      progressBarRow: {
-        width: '100%',
-        height: '8px',
-        backgroundColor: '#e0e0e0',
-        borderRadius: '9999px',
-        display: 'flex',
-        overflow: 'hidden'
-      },
-      progressSegmentCompleted: {
-        height: '100%',
-        backgroundColor: '#22c55e'
-      },
-      progressSegmentRunning: {
-        height: '100%',
-        backgroundColor: '#3b82f6'
-      },
-      progressSegmentError: {
-        height: '100%',
-        backgroundColor: '#ef4444'
-      },
-      progressSegmentQueue: {
-        height: '100%',
-        backgroundColor: '#eab308'
-      }
-    };
   }
   
   // Helper methods
@@ -199,138 +47,397 @@ class TaskDashboard extends PureComponent {
     return hasErrors ? 'Bad' : 'Good';
   }
   
-  renderHeader() {
+  render() {
+    const completionPercentage = this.calculateCompletionPercentage();
     const overallStatus = this.determineOverallStatus();
     
+    // Inline styles
+    const styles = {
+      dashboard: {
+        fontFamily: 'Arial, sans-serif',
+        color: '#333',
+        padding: '12px',
+        backgroundColor: '#f5f7fa',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px'
+      },
+      header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '8px 16px',
+        backgroundColor: 'white',
+        borderRadius: '4px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+      },
+      headerTitle: {
+        margin: 0,
+        fontSize: '16px',
+        fontWeight: 'bold'
+      },
+      statusBadge: {
+        padding: '4px 12px',
+        borderRadius: '20px',
+        fontWeight: 'bold',
+        fontSize: '13px',
+        backgroundColor: overallStatus === 'Good' ? '#d1fae5' : '#fee2e2',
+        color: overallStatus === 'Good' ? '#065f46' : '#b91c1c'
+      },
+      statsContainer: {
+        display: 'flex',
+        gap: '12px',
+        marginBottom: '12px'
+      },
+      statsBox: {
+        backgroundColor: 'white',
+        borderRadius: '4px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        flex: 1,
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
+      },
+      statsBoxTitle: {
+        fontSize: '13px',
+        fontWeight: 'normal',
+        color: '#6b7280',
+        marginTop: 0,
+        marginBottom: '8px'
+      },
+      progressBarContainer: {
+        width: '100%',
+        height: '8px',
+        backgroundColor: '#e5e7eb',
+        borderRadius: '4px',
+        overflow: 'hidden',
+        marginTop: '8px'
+      },
+      progressBar: {
+        height: '100%',
+        backgroundColor: '#3b82f6',
+        borderRadius: '4px'
+      },
+      statValue: {
+        fontSize: '24px',
+        fontWeight: 'bold',
+        margin: 0
+      },
+      statPercent: {
+        fontSize: '18px',
+        fontWeight: 'bold',
+        color: '#3b82f6'
+      },
+      statLabel: {
+        fontSize: '13px',
+        color: '#6b7280',
+        marginTop: '4px'
+      },
+      tableContainer: {
+        backgroundColor: 'white',
+        borderRadius: '4px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        padding: '16px',
+        flexGrow: 1,
+        overflow: 'auto'
+      },
+      tableHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '12px'
+      },
+      tableTitle: {
+        fontSize: '15px',
+        fontWeight: 'bold',
+        margin: 0
+      },
+      tableSubtitle: {
+        fontSize: '13px',
+        color: '#6b7280'
+      },
+      table: {
+        width: '100%',
+        borderCollapse: 'collapse'
+      },
+      th: {
+        textAlign: 'left',
+        padding: '10px 16px',
+        fontSize: '13px',
+        fontWeight: 'normal',
+        color: '#6b7280',
+        borderBottom: '1px solid #e5e7eb'
+      },
+      td: {
+        padding: '12px 16px',
+        fontSize: '14px',
+        borderBottom: '1px solid #e5e7eb'
+      },
+      taskProgressBar: {
+        height: '6px',
+        backgroundColor: '#e5e7eb',
+        borderRadius: '3px',
+        overflow: 'hidden',
+        display: 'flex'
+      },
+      progressSegment: {
+        height: '100%'
+      },
+      statusIndicator: {
+        width: '8px',
+        height: '8px',
+        borderRadius: '50%',
+        marginRight: '8px'
+      },
+      circularProgressContainer: {
+        position: 'relative',
+        width: '150px',
+        height: '150px',
+        margin: '0 auto',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      circularProgressText: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: '100%'
+      },
+      circularProgressPercent: {
+        fontSize: '26px',
+        fontWeight: 'bold',
+        color: '#10b981',
+        marginBottom: '5px'
+      },
+      circularProgressFraction: {
+        fontSize: '16px',
+        fontWeight: '500',
+        color: '#6b7280'
+      }
+    };
+
     return (
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{...this.styles.sectionTitle, margin: 0}}>Task Management Dashboard</h2>
-        <span 
-          style={{
-            ...this.styles.statusBadge, 
-            ...(overallStatus === 'Good' ? this.styles.statusGood : this.styles.statusBad)
-          }}
-        >
-          Status: {overallStatus}
-        </span>
-      </div>
-    );
-  }
-  
-  renderProgressBar() {
-    const completionPercentage = this.calculateCompletionPercentage();
-    
-    return (
-      <div style={this.styles.progressContainer}>
-        <div style={this.styles.progressHeader}>
-          <span style={this.styles.progressLabel}>Task Completion</span>
-          <span style={this.styles.progressLabel}>
-            {completionPercentage}% ({this.data.completed}/{this.data.toatl_tasks})
-          </span>
+      <div style={styles.dashboard}>
+        {/* Header with Status */}
+        <div style={styles.header}>
+          <h1 style={styles.headerTitle}>Task Management Dashboard</h1>
+          <div style={styles.statusBadge}>
+            Status: {overallStatus}
+          </div>
         </div>
-        <div style={this.styles.progressBarContainer}>
-          <div 
-            style={{
-              ...this.styles.progressBar,
-              width: `${completionPercentage}%`
-            }}
-          ></div>
-        </div>
-      </div>
-    );
-  }
-  
-  renderStatusSection() {
-    return (
-      <div style={this.styles.statusGrid}>
-        <div style={this.styles.statusBox}>
-          <h3 style={this.styles.sectionTitle}>Current Status</h3>
-          <div style={this.styles.metricsContainer}>
-            <div style={this.styles.metricItem}>
-              <span style={this.styles.metricLabel}>Running</span>
-              <span style={this.styles.metricValue}>{this.data.currentstatus.running}</span>
+        
+        {/* Main stats container with nested layout */}
+        <div style={{display: 'flex', gap: '12px', marginBottom: '12px'}}>
+          {/* Task Completion Card - 40% width with horizontal layout */}
+          <div style={{
+            ...styles.statsBox,
+            padding: '16px 20px',
+            width: '40%',
+            display: 'flex',
+            alignItems: 'center',
+            boxSizing: 'border-box'
+          }}>
+            <div style={{
+              width: '90px',
+              height: '90px',
+              position: 'relative',
+              flexShrink: 0
+            }}>
+              <svg width="100%" height="100%" viewBox="0 0 100 100">
+                {/* Background circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="transparent"
+                  stroke="#e5e7eb"
+                  strokeWidth="8"
+                />
+                
+                {/* Progress circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="transparent"
+                  stroke="#10b981"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={`${completionPercentage * 2.64} 264`}
+                  strokeDashoffset="0"
+                  transform="rotate(-90 50 50)"
+                />
+              </svg>
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '22px',
+                  fontWeight: 'bold',
+                  color: '#10b981',
+                  lineHeight: '1'
+                }}>{completionPercentage}%</div>
+              </div>
             </div>
-            <div style={this.styles.metricItem}>
-              <span style={this.styles.metricLabel}>Error</span>
-              <span style={this.styles.metricValue}>{this.data.currentstatus.completed_with_error}</span>
+            
+            <div style={{marginLeft: '15px', flex: 1}}>
+              <h3 style={{...styles.statsBoxTitle, fontSize: '13px', margin: '0 0 8px 0'}}>TASK COMPLETION</h3>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: '5px',
+                marginBottom: '8px'
+              }}>
+                <div style={{fontSize: '26px', fontWeight: 'bold', color: '#111827', lineHeight: 1}}>
+                  {this.data.completed}
+                </div>
+                <div style={{fontSize: '14px', color: '#6b7280'}}>
+                  of {this.data.toatl_tasks} tasks
+                </div>
+              </div>
+              
+              <div style={{fontSize: '13px', color: '#6b7280'}}>
+                {this.data.toatl_tasks - this.data.completed} tasks remaining
+              </div>
             </div>
-            <div style={this.styles.metricItem}>
-              <span style={this.styles.metricLabel}>Submitted</span>
-              <span style={this.styles.metricValue}>{this.data.currentstatus.submitted}</span>
+          </div>
+          
+          {/* Right column with Status and Data Center cards */}
+          <div style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '60%'}}>
+            {/* Current Status */}
+            <div style={{
+              ...styles.statsBox,
+              boxSizing: 'border-box'
+            }}>
+              <h3 style={styles.statsBoxTitle}>CURRENT STATUS</h3>
+              <div style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%'}}>
+                <div style={{textAlign: 'center'}}>
+                  <p style={{...styles.statValue, color: '#3b82f6', margin: 0}}>{this.data.currentstatus.running}</p>
+                  <p style={{...styles.statLabel, margin: 0}}>Running</p>
+                </div>
+                <div style={{textAlign: 'center'}}>
+                  <p style={{...styles.statValue, color: '#ef4444', margin: 0}}>{this.data.currentstatus.completed_with_error}</p>
+                  <p style={{...styles.statLabel, margin: 0}}>Error</p>
+                </div>
+                <div style={{textAlign: 'center'}}>
+                  <p style={{...styles.statValue, color: '#f59e0b', margin: 0}}>{this.data.currentstatus.submitted}</p>
+                  <p style={{...styles.statLabel, margin: 0}}>Submitted</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Data Center */}
+            <div style={{
+              ...styles.statsBox,
+              boxSizing: 'border-box'
+            }}>
+              <h3 style={styles.statsBoxTitle}>DATA CENTER</h3>
+              <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                <div style={{textAlign: 'center'}}>
+                  <p style={{...styles.statValue, fontSize: '20px'}}>{this.data.data_center.cloud}</p>
+                  <p style={styles.statLabel}>Cloud</p>
+                </div>
+                <div style={{textAlign: 'center'}}>
+                  <p style={{...styles.statValue, fontSize: '20px'}}>{this.data.data_center.on_prame}</p>
+                  <p style={styles.statLabel}>On-Premise</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         
-        <div style={this.styles.statusBox}>
-          <h3 style={this.styles.sectionTitle}>Data Center Distribution</h3>
-          <div style={this.styles.metricsContainer}>
-            <div style={this.styles.metricItem}>
-              <span style={this.styles.metricLabel}>Cloud</span>
-              <span style={this.styles.metricValue}>{this.data.data_center.cloud}</span>
-            </div>
-            <div style={this.styles.metricItem}>
-              <span style={this.styles.metricLabel}>On-Premise</span>
-              <span style={this.styles.metricValue}>{this.data.data_center.on_prame}</span>
-            </div>
+        {/* Running Tasks Table */}
+        <div style={styles.tableContainer}>
+          <div style={styles.tableHeader}>
+            <h2 style={styles.tableTitle}>Running Tasks</h2>
+            <span style={styles.tableSubtitle}>{this.data.running.length} active tasks</span>
           </div>
-        </div>
-      </div>
-    );
-  }
-  
-  renderTasksTable() {
-    return (
-      <div>
-        <h3 style={this.styles.sectionTitle}>Running Tasks</h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={this.styles.table}>
-            <thead style={this.styles.tableHeader}>
+          
+          <table style={styles.table}>
+            <thead>
               <tr>
-                <th style={this.styles.tableHeaderCell}>Task Name</th>
-                <th style={{...this.styles.tableHeaderCell, textAlign: 'center'}}>Running</th>
-                <th style={{...this.styles.tableHeaderCell, textAlign: 'center'}}>Completed</th>
-                <th style={{...this.styles.tableHeaderCell, textAlign: 'center'}}>With Error</th>
-                <th style={{...this.styles.tableHeaderCell, textAlign: 'center'}}>In Queue</th>
-                <th style={{...this.styles.tableHeaderCell, textAlign: 'center'}}>Progress</th>
+                <th style={styles.th}>Task Name</th>
+                <th style={styles.th}>Running</th>
+                <th style={styles.th}>Completed</th>
+                <th style={styles.th}>Error</th>
+                <th style={styles.th}>Queue</th>
+                <th style={{...styles.th, width: '30%'}}>Progress</th>
               </tr>
             </thead>
-            <tbody style={this.styles.tableBody}>
+            <tbody>
               {this.data.running.map((task, index) => {
                 const total = task.child_task_running + task.child_task_completed + 
-                              task.child_task_with_error + task.child_task_onqueue;
+                             task.child_task_with_error + task.child_task_onqueue;
+                const completedPct = Math.round((task.child_task_completed / total) * 100);
+                
                 return (
-                  <tr key={index} style={this.styles.tableRow}>
-                    <td style={{...this.styles.tableCell, fontWeight: '500'}}>{task.task_name}</td>
-                    <td style={this.styles.tableCellCenter}>{task.child_task_running}</td>
-                    <td style={this.styles.tableCellCenter}>{task.child_task_completed}</td>
-                    <td style={this.styles.tableCellCenter}>{task.child_task_with_error}</td>
-                    <td style={this.styles.tableCellCenter}>{task.child_task_onqueue}</td>
-                    <td style={this.styles.tableCell}>
-                      <div style={this.styles.progressBarRow}>
+                  <tr key={index}>
+                    <td style={styles.td}>
+                      <div style={{display: 'flex', alignItems: 'center'}}>
                         <div 
                           style={{
-                            ...this.styles.progressSegmentCompleted,
-                            width: `${(task.child_task_completed / total) * 100}%`
+                            ...styles.statusIndicator, 
+                            backgroundColor: task.child_task_with_error > 0 ? '#ef4444' : '#3b82f6'
                           }}
                         ></div>
-                        <div 
-                          style={{
-                            ...this.styles.progressSegmentRunning,
-                            width: `${(task.child_task_running / total) * 100}%`
-                          }}
-                        ></div>
-                        <div 
-                          style={{
-                            ...this.styles.progressSegmentError,
-                            width: `${(task.child_task_with_error / total) * 100}%`
-                          }}
-                        ></div>
-                        <div 
-                          style={{
-                            ...this.styles.progressSegmentQueue,
-                            width: `${(task.child_task_onqueue / total) * 100}%`
-                          }}
-                        ></div>
+                        {task.task_name}
+                      </div>
+                    </td>
+                    <td style={styles.td}>{task.child_task_running}</td>
+                    <td style={styles.td}>{task.child_task_completed}</td>
+                    <td style={{...styles.td, color: task.child_task_with_error > 0 ? '#ef4444' : 'inherit'}}>
+                      {task.child_task_with_error}
+                    </td>
+                    <td style={styles.td}>{task.child_task_onqueue}</td>
+                    <td style={styles.td}>
+                      <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                        <div style={{flex: 1}}>
+                          <div style={styles.taskProgressBar}>
+                            <div 
+                              style={{
+                                ...styles.progressSegment, 
+                                backgroundColor: '#22c55e',
+                                width: `${(task.child_task_completed / total) * 100}%`
+                              }}
+                            ></div>
+                            <div 
+                              style={{
+                                ...styles.progressSegment, 
+                                backgroundColor: '#3b82f6',
+                                width: `${(task.child_task_running / total) * 100}%`
+                              }}
+                            ></div>
+                            <div 
+                              style={{
+                                ...styles.progressSegment, 
+                                backgroundColor: '#ef4444',
+                                width: `${(task.child_task_with_error / total) * 100}%`
+                              }}
+                            ></div>
+                            <div 
+                              style={{
+                                ...styles.progressSegment, 
+                                backgroundColor: '#f59e0b',
+                                width: `${(task.child_task_onqueue / total) * 100}%`
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                        <div style={{width: '36px', fontSize: '13px', fontWeight: 'bold'}}>{completedPct}%</div>
                       </div>
                     </td>
                   </tr>
@@ -338,21 +445,6 @@ class TaskDashboard extends PureComponent {
               })}
             </tbody>
           </table>
-        </div>
-      </div>
-    );
-  }
-  
-  render() {
-    return (
-      <div style={this.styles.container}>
-        <div style={this.styles.card}>
-          <div style={this.styles.cardContent}>
-            {this.renderHeader()}
-            {this.renderProgressBar()}
-            {this.renderStatusSection()}
-            {this.renderTasksTable()}
-          </div>
         </div>
       </div>
     );
