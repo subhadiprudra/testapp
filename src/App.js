@@ -15,8 +15,11 @@ function App() {
           <FeedStatusDashboard />
         </div>
         <JobStatusDashboard style={{ margin: '16px' }} />
-        <TaskDashboard style={{ margin: '16px' }} />
-        <MetricsDashboard style={{ margin: '16px' }} />
+        <div style={{ display: 'flex', flexDirection: 'row', margin: '44px' }}>
+          <TaskDashboard style={{ margin: '16px' }} />
+          <MetricsDashboard style={{ margin: '16px' }} />
+        </div>
+        
       </div>
     </div>
   );
